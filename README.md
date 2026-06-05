@@ -7,7 +7,7 @@
 
 3.Compile COBOL program into executable
 Note : (now no need to compile since , I don't add in gitignore but later this will add in gitignore)
-> cobc -x cobol/calc.cbl -o bin/calc.exe
+> cobc -m cobol/add.cbl -o bin/add.dll
 
 4. RUN APPLICATION
 Start Node.js server:
