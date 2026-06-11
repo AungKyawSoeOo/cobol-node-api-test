@@ -1,19 +1,29 @@
 const koffi = require("koffi");
 const path = require("path");
 
-const addLibPath = path.join(__dirname, "../../bin/add.dll");
-const subLibPath = path.join(__dirname, "../../bin/sub.dll");
+const addLibPath = path.join(__dirname, "..", "..", "bin", "add.dll");
+const subLibPath = path.join(__dirname, "..", "..", "bin", "sub.dll")
+
+// Initialize the COBOL runtime
+const libsFolder = path.join(__dirname, "..", "libs");
+const libcobPath = path.join(libsFolder, "libcob-4.dll");
+
+const originalDirectory = process.cwd();
+try {
+    process.chdir(libsFolder);
+    const libcob = koffi.load(libcobPath);
+    const initCobol = libcob.func("cob_init", "void", ["int", "void*"]);
+    initCobol(0, null);
+    
+} finally {
+    process.chdir(originalDirectory);
+}
 
 const addLib = koffi.load(addLibPath);
 const subLib = koffi.load(subLibPath);
 
 const addFunc = addLib.func("ADDNUM", "void", ["int32*", "int32*", "int32*"]);
 const subFunc = subLib.func("SUBNUM", "void", ["int32*", "int32*", "int32*"]);
-
-// Initialize the COBOL runtime
-const libcob = koffi.load("libcob-4.dll");
-const initCobol = libcob.func("cob_init", "void", ["int", "void*"]);
-initCobol(0, null);
 
 async function add(a, b) {
     let aBuf = Buffer.alloc(4);
